@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Python build scripts (kept locally, not in repo)
+build_*.py
+*.b64
+*.pyc
+__pycache__/
+
+# Temp
+*.tmp
