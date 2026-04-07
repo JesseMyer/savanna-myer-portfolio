@@ -1,73 +1,89 @@
-# Savanna Myer — Portfolio Site
+**savanna-myer-portfolio**
+Personal brand site and professional documents for Savanna Myer — Head of Security, Compliance & Governance.
+Live: savanna.myersmiles.com
 
-Personal brand and resume site for Savanna Myer, Head of Security & Compliance.
+**What's in this repo**
+FileDescriptionindex.htmlSingle-file portfolio site (self-contained, ~10MB with embedded assets)savanna-myer-detailed-resume.docx22-page detailed resume, Word formatsavanna-myer-detailed-resume.docWord 97-2003 format (maximum compatibility)savanna-myer-summary.pdf3-page premium PDF summarysavanna-myer-ats.txtPlain-text ATS-optimized resume
 
-**Live site:** https://savanna.myersmiles.com
+**Site (index.html)**
+A single self-contained HTML file deployed via GitHub Pages. No build step, no dependencies, no CDN calls at runtime. Everything — fonts, images, icons, the headshot — is embedded as base64 or inlined CSS.
+Sections:
 
-## Repository Contents
+Identity and value proposition with animated KPI strip
+Professional summary and Coordinated Compliance methodology
+Career timeline (Rubrik → People.ai → Elastic → Foundation Era)
+Certification portfolio: 22 active standards, 9 jurisdictions
+Global market access map: certification to revenue mapping
+Myers Miles photography section (community work with SCDA and COMSCC)
+Contact and document downloads
 
-| File | Description | Size |
-|------|-------------|------|
-| `index.html` | Self-contained portfolio site | ~3.9MB |
-| `savanna-myer-detailed-resume.pdf` | 10-page detailed resume with glossary | ~30KB |
-| `savanna-myer-summary.pdf` | 8-page infographic summary | ~21KB |
-| `savanna-myer-ats.txt` | ATS-scannable plain text (government/federal) | ~5KB |
-| `og-preview.jpg` | Social media preview image — **add before going live** | 1200×630px |
-| `CNAME` | Custom domain config for GitHub Pages | 1 line |
+Tech:
 
-## Deployment
+Vanilla HTML/CSS/JS — no frameworks
+D3.js for data visualizations
+Cormorant Garamond (display) + Jost (sans) via Google Fonts
+Dark navy / teal / amber color system matching --teal: #3ab5d4, --amber: #c8921a
+Responsive: mobile, tablet, desktop
+GitHub Pages deployment via jessemyer/savanna-myer-portfolio
+Custom domain via Squarespace CNAME: savanna → jessemyer.github.io
 
-Hosted via **GitHub Pages** on a custom domain.
 
-```
-Branch: main
-Source: / (root)
-Custom domain: savanna.myersmiles.com
-HTTPS: enforced
-```
+Detailed Resume (savanna-myer-detailed-resume.docx / .doc)
+Built with docx-js (Node.js), post-processed with a Python patcher for full Word compatibility.
+22 pages covering:
+PageSectionP1Identity, Professional Summary, 6 KPI tilesP2Index (2-column with dotted leaders)P3Core Competencies (10 domains)P4Certification & Standards Portfolio: 22 Active StandardsP5Career Overview: 13 Years, Three ArcsP6Rubrik, Inc. (Head of Security, Compliance & Governance)P7People.ai (Sr. Manager, Governance & Compliance)P8Elastic (Principal Security Risk & Compliance Analyst)P9Aetna / CVS HealthP10EvariantP11Earlier Roles: Foundation Era 2011–2018 (Saint Mary's + OSU/Huntington)P12Customer Trust: Function OverviewP13Education (4 degrees)P14Interdisciplinary Foundation: Three Degrees, One LensP15Compliance Culture & Change ManagementP16Client & Industry Experience BreakdownP17Global Market Access, Certification to Revenue MappingP18Technology & Tool ProficiencyP19Professional Development & Continuing EducationP20Professional Memberships & AffiliationsP21Appendix A: Certification Acquisition TimelineP22Appendix B: Program Performance Metrics
+Design system:
 
-DNS: Add a `CNAME` record pointing `savanna` → `jessemyer.github.io`
+Colors: Website teal #2a9db8 (primary), Navy #1a4a7a (secondary), Win green #2d8a55 (positive metrics)
+Fonts: Cormorant Garamond (display headings), Century Gothic (body and sidebar)
+All borders ≤ 0.25pt (hairline only)
+Sidebar: tools, key terms, contextual items for every career block
+richBullet() bolds 40 sidebar/glossary cross-reference terms inline in every bullet
+Headshot embedded as base64 JPEG on P1
 
-## Tech Stack
+Build pipeline:
+bashnode build_resume_v9.js
+# Outputs: savanna-myer-detailed-resume.docx
+# Post-build: patch_docx.py injects theme1.xml, webSettings.xml,
+#             Normal style, DefaultParagraphFont (all required by Word,
+#             all omitted by docx-js)
+Word compatibility notes:
 
-- Pure HTML/CSS/JS — no build tools, no framework, no npm
-- D3.js for data visualizations (radar, area charts, venn diagram, dumbbell chart)
-- Google Fonts: Cormorant Garamond, Jost, DM Mono
-- All images base64-embedded — fully self-contained single file
-- PDF documents: ReportLab (Python), Times/Helvetica/Courier typography
+docx-js does not generate word/theme/theme1.xml or word/webSettings.xml; Word hard-requires both. patch_docx.py injects them using Python's zipfile module after every build.
+Normal paragraph style (with w:default="1") and DefaultParagraphFont character style are also injected; their absence causes the "unreadable content" error in Word 2016+.
+All tintCell() returns are wrapped in tintRow() before being pushed to the document body. A bare <w:tc> as a direct child of <w:body> is a hard XML schema violation that Word rejects silently.
+For maximum compatibility, use the .doc file (Word 97-2003 binary format, converted by LibreOffice).
 
-## Updating Resume Files
 
-Drop new PDF/TXT files in the root, commit, and push.
-GitHub Pages auto-deploys in ~2 minutes.
+PDF Summary (savanna-myer-summary.pdf)
+3-page premium PDF built with ReportLab canvas (Python), pixel-exact layout. No PDF template or intermediate format.
+Page 1: Identity (headshot + contact + credentials + education + memberships) · Tagline · 6 KPI tiles · Why Hire Me narrative · What I Build (4 proof points with financial figures)
+Page 2: Financial Impact sidebar (6 figures: $1B+, $5.6B, $1.2B, +$18M, $271M, $100B+) · Program Metrics sidebar (8 before/after rows) · Target Role · Full career timeline (4 eras with colored financial impact tags) · Coordinated Compliance methodology strip (5 Greek-letter pillars)
+Page 3: Certification portfolio (22 standards, 3-column grid with market access justification per cert) · Coordinated Compliance methodology strip · Professional Development (6 programs) · Pull quote
+Design matches the site: same navy/teal/amber palette, same two-column sidebar structure, headshot top-left of sidebar.
 
-```bash
-git add savanna-myer-detailed-resume.pdf
-git commit -m "docs: update detailed resume"
-git push
-```
+ATS Text (savanna-myer-ats.txt)
+Plain UTF-8, no special characters, structured for automated resume parsers. Includes full contact info, summary, all career blocks with dates and bullets, certifications list, education, tools. ~11KB, 152 lines.
 
-## Updating Site Content
+Key content facts
 
-The site is generated from `/build_v29.py` (not checked in — lives locally).
-To regenerate: run `python3 build_v29.py` then copy the output to `index.html`.
+Location: Connecticut, United States (remote-first)
+Email: savanna.myer@gmail.com
+LinkedIn: linkedin.com/in/savannamyer
+Portfolio: savanna.myersmiles.com
+FedRAMP posture: "assisted in building" — never "led" (accurate per role scope)
+References: available upon request (no references page in document set)
 
-## Updating Recommendations
 
-Search `index.html` for placeholder names:
-- Alex Thornton, Jordan Mercer, Dana Whitfield
-- Priya Nambiar, Marcus Delacroix, Soren Lindqvist
+Repo structure
+savanna-myer-portfolio/
+├── index.html                          # Full site (single file, ~10MB)
+├── savanna-myer-detailed-resume.docx   # 22-page detailed resume
+├── savanna-myer-detailed-resume.doc    # Word 97-2003 (max compatibility)
+├── savanna-myer-summary.pdf            # 3-page PDF summary
+├── savanna-myer-ats.txt               # ATS plain text
+└── README.md                           # This file
 
-Replace name, role title, and testimonial text in the `.rec-card` blocks.
-
-## Contact Form
-
-Currently uses `mailto:`. To connect to Formspree:
-1. Sign up at formspree.io, create a form, get the endpoint URL
-2. In `index.html`, find `doSubmit()` and replace the `mailto:` line with a `fetch()` POST to the Formspree endpoint
-
-## Adding og-preview.jpg
-
-Screenshot the hero section at 1200×630px and save as `og-preview.jpg` in the root.
-This image appears when the site is shared on LinkedIn, Twitter/X, Slack, etc.
-The `<meta property="og:image">` tag already references it.
+Build sources
+All builders live outside this repo (working directory only). For regeneration:
+BuilderLanguageOutputbuild_v34.pyPythonindex.html (site)build_resume_v9.jsNode.js + docx-jssavanna-myer-detailed-resume.docxpatch_docx.pyPython + zipfileWord compatibility patch (runs after v9.js)build_pdf_premium.pyPython + ReportLabsavanna-myer-summary.pdfbuild_ats.pyPythonsavanna-myer-ats.txt
