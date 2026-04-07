@@ -978,7 +978,7 @@ footer{background:var(--deep);border-top:1px solid var(--edge);padding:52px}
         </div>
         <div class="form-success" id="csuccess">
           <h3>Message sent.</h3>
-          <p>Your mail client should have opened. Reach me directly on <a href="https://linkedin.com/in/savannamyer" target="_blank" style="color:var(--teal)">LinkedIn &#8599;</a></p>
+          <p>I&#8217;ll be in touch shortly. You can also reach me directly on <a href="https://linkedin.com/in/savannamyer" target="_blank" style="color:var(--teal)">LinkedIn &#8599;</a></p>
         </div>
       </div>
       <div style="padding-top:6px">
@@ -1434,11 +1434,12 @@ buildChart('chart-rubrik', M, [{x:'FY23',y:600},{x:'FY24',y:628},{x:'FY25',y:887
 })();
 
 function doSubmit() {
-  var name = document.getElementById('cf-name').value.trim();
-  var email = document.getElementById('cf-email').value.trim();
+  var name    = document.getElementById('cf-name').value.trim();
+  var email   = document.getElementById('cf-email').value.trim();
   var company = document.getElementById('cf-company').value.trim();
-  var stage = document.getElementById('cf-stage').value;
-  var msg = document.getElementById('cf-msg').value.trim();
+  var stage   = document.getElementById('cf-stage').value;
+  var msg     = document.getElementById('cf-msg').value.trim();
+
   if (!name || !email || !msg) {
     var fid = !name ? 'cf-name' : (!email ? 'cf-email' : 'cf-msg');
     var el = document.getElementById(fid);
@@ -1446,17 +1447,36 @@ function doSubmit() {
     setTimeout(function() { el.style.borderColor = ''; }, 2000);
     return;
   }
-  var body = 'Name: ' + name + '\nEmail: ' + email + '\n'
-    + (company ? 'Company: ' + company + '\n' : '')
-    + (stage ? 'Stage: ' + stage + '\n' : '')
-    + '\nMessage:\n' + msg;
-  window.location.href = 'mailto:savanna.myer@gmail.com?subject='
-    + encodeURIComponent('From Savanna.myersmiles.com Contact Form')
-    + '&body=' + encodeURIComponent(body);
-  setTimeout(function() {
-    document.getElementById('cform').style.display = 'none';
-    document.getElementById('csuccess').style.display = 'block';
-  }, 400);
+
+  var btn = document.querySelector('.form-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  fetch('https://formspree.io/f/YOUR_FORMSPREE_ID', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      name:    name,
+      email:   email,
+      company: company || 'Not provided',
+      stage:   stage   || 'Not provided',
+      message: msg
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      document.getElementById('cform').style.display = 'none';
+      document.getElementById('csuccess').style.display = 'block';
+    } else {
+      throw new Error('Formspree error');
+    }
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Send message →';
+    alert('Something went wrong. Please email savanna.myer@gmail.com directly.');
+  });
 }
 </script>
 </body>
